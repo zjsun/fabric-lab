@@ -1,34 +1,34 @@
 OrdererOrgs:
   - Name: Orderer
-    Domain: example.com
+    Domain: samples.cn
     Specs:
-      - Hostname: orderer
+      - Hostname: orderer1
 
 PeerOrgs:
   - Name: Bank1
-    Domain: bank1.example.com
+    Domain: bank1.samples.cn
     Template:
       Count: 2
     Users:
-      Count: 1
+      Count: 2
 
   - Name: Owner1
-    Domain: owner1.example.com
+    Domain: owner1.samples.cn
     Template:
       Count: 2
     Users:
-      Count: 1
+      Count: 2
 
   - Name: Storage1
-    Domain: storage1.example.com
+    Domain: storage1.samples.cn
     Template:
       Count: 2
     Users:
-      Count: 1
+      Count: 2
 
   - Name: Supervisor1
-    Domain: supervisor1.example.com
+    Domain: supervisor1.samples.cn
     Template:
       Count: 2
     Users:
-      Count: 1
+      Count: 2

@@ -56,6 +56,47 @@ function generateCerts (){
   echo
 }
 
+# 生成创世块、通道交易配置以及节点更新交易
+function generateChannelArtifacts() {
+  which configtxgen
+  if [ "$?" -ne 0 ]; then
+    echo "configtxgen tool not found. exiting"
+    exit 1
+  fi
+
+  echo "##########################################################"
+  echo "#########  Generating Orderer Genesis block ##############"
+  echo "##########################################################"
+  configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate orderer genesis block..."
+    exit 1
+  fi
+  echo
+  echo "#################################################################"
+  echo "### Generating channel configuration transaction 'channel.tx' ###"
+  echo "#################################################################"
+  configtxgen -profile OrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate channel configuration transaction..."
+    exit 1
+  fi
+
+  for OrgMSP in Bank1MSP Owner1MSP Storage1MSP Supervisor1MSP; do
+    echo
+    echo "#################################################################"
+    echo "#######    Generating anchor peer update for ${OrgMSP}   ##########"
+    echo "#################################################################"
+    configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/${OrgMSP}anchors.tx -channelID $CHANNEL_NAME -asOrg ${OrgMSP}
+    if [ "$?" -ne 0 ]; then
+      echo "Failed to generate anchor peer update for ${OrgMSP}..."
+      exit 1
+    fi
+  done
+
+  echo
+}
+
 function replacePrivateKey () {
   # MaxOSX 特殊
   ARCH=`uname -s | grep Darwin`
@@ -65,25 +106,58 @@ function replacePrivateKey () {
     OPTS="-i"
   fi
 
-  # Copy the template to the file that will be modified to add the private key
-  cp docker-compose-e2e-template.yaml docker-compose-e2e.yaml
+  cp docker-base/template.yaml docker-compose.yaml
 
-  # The next steps will replace the template's contents with the
-  # actual values of the private key file names for the two CAs.
   CURRENT_DIR=$PWD
-  cd crypto-config/peerOrganizations/org1.example.com/ca/
+
+  cd crypto-config/peerOrganizations/bank1.samples.cn/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
-  sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-  cd crypto-config/peerOrganizations/org2.example.com/ca/
+  sed $OPTS "s/CA_BANK1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/owner1.samples.cn/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
-  sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+  sed $OPTS "s/CA_OWNER1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/storage1.samples.cn/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA_STORAGE1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+
+  cd crypto-config/peerOrganizations/supervisor1.samples.cn/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA_SUPERVISOR1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
 
   # MaxOSX 特殊
   if [ "$ARCH" == "Darwin" ]; then
     rm docker-compose-e2e.yamlt
   fi
+}
+
+# 创建docker容器
+function networkCreate () {
+  CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=$CLI_TIMEOUT DELAY=$CLI_DELAY docker-compose -f $COMPOSE_FILE create
+  if [ $? -ne 0 ]; then
+    echo "ERROR !!!! Unable to create network"
+    exit 1
+  fi
+}
+
+function networkStart () {
+    docker-compose -f $COMPOSE_FILE start
+}
+
+function networkStop () {
+    docker-compose -f $COMPOSE_FILE stop
+}
+
+function networkClean () {
+    docker-compose -f $COMPOSE_FILE down
+    rm -fr channel-artifacts/
+    rm -fr crypto-config/
+    rm -f $COMPOSE_FILE
 }
 
 
@@ -94,7 +168,6 @@ CLI_TIMEOUT=10
 CLI_DELAY=3
 CHANNEL_NAME="channel-01"
 COMPOSE_FILE=docker-compose.yaml
-COMPOSE_FILE_COUCH=docker-compose-couch.yaml
 
 # 读取参数
 while getopts "h?m:c:t:d:f:" opt; do
@@ -137,8 +210,8 @@ confirm
 # 执行子命令
 if [ "${MODE}" == "create" ]; then
   generateCerts
-  replacePrivateKey
   generateChannelArtifacts
+  replacePrivateKey
   networkCreate
 elif [ "${MODE}" == "start" ]; then
   networkStart

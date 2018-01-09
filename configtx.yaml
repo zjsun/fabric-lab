@@ -1,0 +1,85 @@
+Profiles:
+    OrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *Orderer
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Bank1
+                    - *Owner1
+                    - *Storage1
+                    - *Supervisor1
+    OrgsChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Bank1
+                - *Owner1
+                - *Storage1
+                - *Supervisor1
+
+Organizations:
+    - &Orderer
+        Name: OrdererMSP
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/samples.com/msp
+
+    - &Bank1
+        Name: Bank1MSP
+        ID: Bank1MSP
+        MSPDir: crypto-config/peerOrganizations/bank1.samples.cn/msp
+
+        AnchorPeers:
+          - Host: peer0.bank1.samples.cn
+            Port: 7051
+
+    - &Owner1
+        Name: Owner1MSP
+        ID: Owner1MSP
+        MSPDir: crypto-config/peerOrganizations/owner1.samples.cn/msp
+
+        AnchorPeers:
+          - Host: peer0.owner1.samples.cn
+            Port: 7051
+
+    - &Storage1
+        Name: Storage1MSP
+        ID: Storage1MSP
+        MSPDir: crypto-config/peerOrganizations/storage1.samples.cn/msp
+
+        AnchorPeers:
+          - Host: peer0.storage1.samples.cn
+            Port: 7051
+
+    - &Supervisor1
+        Name: Supervisor1MSP
+        ID: Supervisor1MSP
+        MSPDir: crypto-config/peerOrganizations/supervisor1.samples.cn/msp
+
+        AnchorPeers:
+          - Host: peer0.supervisor1.samples.cn
+            Port: 7051
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+      - orderer1.samples.cn:7050
+
+    BatchTimeout: 2s
+
+    BatchSize:
+      MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+      Brokers:
+        - 127.0.0.1:9092
+
+    Organizations:
+
+Application: &ApplicationDefaults
+    Organizations:
