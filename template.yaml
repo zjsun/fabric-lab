@@ -1,7 +1,7 @@
 version: '2'
 
 networks:
-  samples:
+  lab:
 
 services:
   ca.bank1.samples.cn:
@@ -15,7 +15,7 @@ services:
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_BANK1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.bank1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_BANK1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/ca.bank1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/peerOrganizations/bank1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "7054:7054"
 
@@ -30,7 +30,7 @@ services:
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_OWNER1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.owner1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_OWNER1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/ca.owner1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/peerOrganizations/owner1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "8054:7054"
 
@@ -45,7 +45,7 @@ services:
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_STORAGE1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.storage1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_STORAGE1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/ca.storage1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/peerOrganizations/storage1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "9054:7054"
 
@@ -60,7 +60,7 @@ services:
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.supervisor1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
-      - ./crypto-config/peerOrganizations/ca.supervisor1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ./crypto-config/peerOrganizations/supervisor1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "10054:7054"
 

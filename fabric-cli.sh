@@ -2,7 +2,7 @@
 
 # 工具环境变量
 export FABRIC_CFG_PATH=${PWD}
-export COMPOSE_PROJECT_NAME=fabric_lab
+export COMPOSE_PROJECT_NAME=fabriclab
 
 # 打印帮助
 function printHelp () {
@@ -15,7 +15,7 @@ function printHelp () {
   echo "      - 'restart' - 重启网络服务"
   echo "      - 'clean' - 清理/删除网络服务"
   echo "      - 'create' - 生成所需的网络服务、证书以及创世块"
-  echo "    -c <channel> - 要使用的通道名 (默认为 \"channel-01\")"
+  echo "    -c <channel> - 要使用的通道名 (默认为 \"channel_lab\")"
   echo "    -t <timeout> - 命令超时时间，单位：秒 (默认为 10)"
   echo "    -d <delay> - 命令延时等待时间，单位：秒 (默认为 3)"
   echo "    -f <docker-compose-file> - 指定要使用的 docker-compose 文件 (默认为 \"docker-compose.yaml\")"
@@ -183,7 +183,7 @@ function networkClean () {
 OS_ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
 CLI_TIMEOUT=10
 CLI_DELAY=3
-CHANNEL_NAME="channel-01"
+CHANNEL_NAME="channel_lab"
 COMPOSE_FILE=docker-compose.yaml
 
 # 读取参数
@@ -222,7 +222,8 @@ else
 fi
 
 echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOUT}'"
-confirm
+
+# confirm
 
 # 执行子命令
 if [ "${MODE}" == "create" ]; then
