@@ -16,8 +16,6 @@ services:
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/ca1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
-    ports:
-      - "7054:7054"
     networks:
       - fabric_lab
 
@@ -41,8 +39,6 @@ services:
     - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
     - ../crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/msp:/var/hyperledger/orderer/msp
     - ../crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/tls/:/var/hyperledger/orderer/tls
-    ports:
-      - "7050:7050"
     networks:
       - fabric_lab
 
@@ -71,8 +67,5 @@ services:
         - /var/run/:/host/var/run/
         - ../crypto-config/peerOrganizations/org1.samples.cn/peers/peer0.org1.samples.cn/msp:/etc/hyperledger/fabric/msp
         - ../crypto-config/peerOrganizations/org1.samples.cn/peers/peer0.org1.samples.cn/tls:/etc/hyperledger/fabric/tls
-    ports:
-      - "7051:7051"
-      - "7053:7053"
     networks:
       - fabric_lab

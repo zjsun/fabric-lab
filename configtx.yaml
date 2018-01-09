@@ -3,7 +3,7 @@ Profiles:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *Orderer
+                - *Orderer1
         Consortiums:
             SampleConsortium:
                 Organizations:
@@ -22,10 +22,10 @@ Profiles:
                 - *Supervisor1
 
 Organizations:
-    - &Orderer
+    - &Orderer1
         Name: OrdererMSP
         ID: OrdererMSP
-        MSPDir: crypto-config/ordererOrganizations/samples.com/msp
+        MSPDir: crypto-config/ordererOrganizations/samples.cn/msp
 
     - &Bank1
         Name: Bank1MSP
@@ -72,8 +72,8 @@ Orderer: &OrdererDefaults
 
     BatchSize:
       MaxMessageCount: 10
-        AbsoluteMaxBytes: 99 MB
-        PreferredMaxBytes: 512 KB
+      AbsoluteMaxBytes: 99 MB
+      PreferredMaxBytes: 512 KB
 
     Kafka:
       Brokers:

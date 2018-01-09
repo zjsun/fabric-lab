@@ -2,3 +2,4 @@ crypto-config/*
 channel-artifacts/*
 !.gitkeep
 *.iml
+docker-compose.yaml
