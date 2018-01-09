@@ -154,7 +154,7 @@ function networkCreate () {
 }
 
 function networkStart () {
-    docker-compose -f $COMPOSE_FILE start
+    CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=$CLI_TIMEOUT DELAY=$CLI_DELAY docker-compose -f $COMPOSE_FILE start
 }
 
 function networkStop () {
@@ -237,7 +237,6 @@ elif [ "${MODE}" == "start" ]; then
 elif [ "${MODE}" == "stop" ]; then
   networkStop
 elif [ "${MODE}" == "clean" ]; then
-  networkStop
   networkClean
 elif [ "${MODE}" == "restart" ]; then
   networkStop
