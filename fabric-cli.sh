@@ -2,6 +2,7 @@
 
 # 工具环境变量
 export FABRIC_CFG_PATH=${PWD}
+export COMPOSE_PROJECT_NAME=fabric_lab
 
 # 打印帮助
 function printHelp () {
@@ -235,6 +236,7 @@ elif [ "${MODE}" == "start" ]; then
 elif [ "${MODE}" == "stop" ]; then
   networkStop
 elif [ "${MODE}" == "clean" ]; then
+  networkStop
   networkClean
 elif [ "${MODE}" == "restart" ]; then
   networkStop

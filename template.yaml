@@ -1,7 +1,7 @@
 version: '2'
 
 networks:
-  fabric_lab:
+  samples:
 
 services:
   ca.bank1.samples.cn:
@@ -70,8 +70,10 @@ services:
       service: fabric_orderer
     container_name: orderer1.samples.cn
     volumes:
-      - ../crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/msp:/var/hyperledger/orderer/msp
-      - ../crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/tls/:/var/hyperledger/orderer/tls
+      - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/tls/:/var/hyperledger/orderer/tls
+    ports:
+      - "7050:7050"
 
   peer0.bank1.samples.cn:
     container_name: peer0.bank1.samples.cn
@@ -84,8 +86,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bank1.samples.cn:7051
       - CORE_PEER_LOCALMSPID=Bank1MSP
     volumes:
-      - ../crypto-config/peerOrganizations/bank1.samples.cn/peers/peer0.bank1.samples.cn/msp:/etc/hyperledger/fabric/msp
-      - ../crypto-config/peerOrganizations/bank1.samples.cn/peers/peer0.bank1.samples.cn/tls:/etc/hyperledger/fabric/tls
+      - ./crypto-config/peerOrganizations/bank1.samples.cn/peers/peer0.bank1.samples.cn/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/bank1.samples.cn/peers/peer0.bank1.samples.cn/tls:/etc/hyperledger/fabric/tls
     ports:
       - "7051:7051"
       - "7053:7053"
@@ -101,8 +103,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.owner1.samples.cn:7051
       - CORE_PEER_LOCALMSPID=Owner1MSP
     volumes:
-      - ../crypto-config/peerOrganizations/owner1.samples.cn/peers/peer0.owner1.samples.cn/msp:/etc/hyperledger/fabric/msp
-      - ../crypto-config/peerOrganizations/owner1.samples.cn/peers/peer0.owner1.samples.cn/tls:/etc/hyperledger/fabric/tls
+      - ./crypto-config/peerOrganizations/owner1.samples.cn/peers/peer0.owner1.samples.cn/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/owner1.samples.cn/peers/peer0.owner1.samples.cn/tls:/etc/hyperledger/fabric/tls
     ports:
       - "8051:7051"
       - "8053:7053"
@@ -118,8 +120,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.storage1.samples.cn:7051
       - CORE_PEER_LOCALMSPID=Storage1MSP
     volumes:
-      - ../crypto-config/peerOrganizations/storage1.samples.cn/peers/peer0.storage1.samples.cn/msp:/etc/hyperledger/fabric/msp
-      - ../crypto-config/peerOrganizations/storage1.samples.cn/peers/peer0.storage1.samples.cn/tls:/etc/hyperledger/fabric/tls
+      - ./crypto-config/peerOrganizations/storage1.samples.cn/peers/peer0.storage1.samples.cn/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/storage1.samples.cn/peers/peer0.storage1.samples.cn/tls:/etc/hyperledger/fabric/tls
     ports:
       - "9051:7051"
       - "9053:7053"
@@ -135,8 +137,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.supervisor1.samples.cn:7051
       - CORE_PEER_LOCALMSPID=Supervisor1MSP
     volumes:
-      - ../crypto-config/peerOrganizations/supervisor1.samples.cn/peers/peer0.supervisor1.samples.cn/msp:/etc/hyperledger/fabric/msp
-      - ../crypto-config/peerOrganizations/supervisor1.samples.cn/peers/peer0.supervisor1.samples.cn/tls:/etc/hyperledger/fabric/tls
+      - ./crypto-config/peerOrganizations/supervisor1.samples.cn/peers/peer0.supervisor1.samples.cn/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/supervisor1.samples.cn/peers/peer0.supervisor1.samples.cn/tls:/etc/hyperledger/fabric/tls
     ports:
       - "10051:7051"
       - "10053:7053"
