@@ -10,7 +10,7 @@ services:
       service: fabric_ca
     container_name: ca.bank1.samples.cn
     environment:
-      - FABRIC_CA_SERVER_CA_NAME=ca-bank1
+      - FABRIC_CA_SERVER_CA_NAME=ca.bank1.samples.cn
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.bank1.samples.cn-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_BANK1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.bank1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_BANK1_PRIVATE_KEY -b admin:adminpw -d'
@@ -18,6 +18,8 @@ services:
       - ./crypto-config/peerOrganizations/bank1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "7054:7054"
+    networks:
+      - lab
 
   ca.owner1.samples.cn:
     extends:
@@ -25,7 +27,7 @@ services:
       service: fabric_ca
     container_name: ca.owner1.samples.cn
     environment:
-      - FABRIC_CA_SERVER_CA_NAME=ca-owner1
+      - FABRIC_CA_SERVER_CA_NAME=ca.owner1.samples.cn
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.owner1.samples.cn-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_OWNER1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.owner1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_OWNER1_PRIVATE_KEY -b admin:adminpw -d'
@@ -33,6 +35,8 @@ services:
       - ./crypto-config/peerOrganizations/owner1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "8054:7054"
+    networks:
+      - lab
 
   ca.storage1.samples.cn:
     extends:
@@ -40,7 +44,7 @@ services:
       service: fabric_ca
     container_name: ca.storage1.samples.cn
     environment:
-      - FABRIC_CA_SERVER_CA_NAME=ca-storage1
+      - FABRIC_CA_SERVER_CA_NAME=ca.storage1.samples.cn
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.storage1.samples.cn-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_STORAGE1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.storage1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_STORAGE1_PRIVATE_KEY -b admin:adminpw -d'
@@ -48,6 +52,8 @@ services:
       - ./crypto-config/peerOrganizations/storage1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "9054:7054"
+    networks:
+      - lab
 
   ca.supervisor1.samples.cn:
     extends:
@@ -55,7 +61,7 @@ services:
       service: fabric_ca
     container_name: ca.supervisor1.samples.cn
     environment:
-      - FABRIC_CA_SERVER_CA_NAME=ca-supervisor1
+      - FABRIC_CA_SERVER_CA_NAME=ca.supervisor1.samples.cn
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.supervisor1.samples.cn-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR1_PRIVATE_KEY
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.supervisor1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR1_PRIVATE_KEY -b admin:adminpw -d'
@@ -63,6 +69,8 @@ services:
       - ./crypto-config/peerOrganizations/supervisor1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
     ports:
       - "10054:7054"
+    networks:
+      - lab
 
   orderer1.samples.cn:
     extends:
@@ -74,6 +82,8 @@ services:
       - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/tls/:/var/hyperledger/orderer/tls
     ports:
       - "7050:7050"
+    networks:
+      - lab
 
   peer0.bank1.samples.cn:
     container_name: peer0.bank1.samples.cn
@@ -91,6 +101,8 @@ services:
     ports:
       - "7051:7051"
       - "7053:7053"
+    networks:
+      - lab
 
   peer0.owner1.samples.cn:
     container_name: peer0.owner1.samples.cn
@@ -108,6 +120,8 @@ services:
     ports:
       - "8051:7051"
       - "8053:7053"
+    networks:
+      - lab
 
   peer0.storage1.samples.cn:
     container_name: peer0.storage1.samples.cn
@@ -125,6 +139,8 @@ services:
     ports:
       - "9051:7051"
       - "9053:7053"
+    networks:
+      - lab
 
   peer0.supervisor1.samples.cn:
     container_name: peer0.supervisor1.samples.cn
@@ -142,3 +158,5 @@ services:
     ports:
       - "10051:7051"
       - "10053:7053"
+    networks:
+      - lab

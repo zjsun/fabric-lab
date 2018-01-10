@@ -1,23 +1,18 @@
 version: '2'
 
-networks:
-  lab:
-
 services:
   fabric_ca:
     container_name: fabric_ca
     image: hyperledger/fabric-ca
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca1
+      - FABRIC_CA_SERVER_CA_NAME=fabric_ca
       - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca1.samples.cn-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/fabric_ca-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_PRIVATE_KEY
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/ca1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
-    networks:
-      - lab
 
   fabric_orderer:
     container_name: fabric_orderer
@@ -39,8 +34,6 @@ services:
       - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
       - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/msp:/var/hyperledger/orderer/msp
       - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/tls/:/var/hyperledger/orderer/tls
-    networks:
-      - lab
 
   fabric_peer:
     container_name: fabric_peer
@@ -67,5 +60,3 @@ services:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/org1.samples.cn/peers/peer0.org1.samples.cn/msp:/etc/hyperledger/fabric/msp
         - ./crypto-config/peerOrganizations/org1.samples.cn/peers/peer0.org1.samples.cn/tls:/etc/hyperledger/fabric/tls
-    networks:
-      - lab
