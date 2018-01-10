@@ -2,7 +2,6 @@
 
 # 工具环境变量
 export FABRIC_CFG_PATH=${PWD}
-export COMPOSE_PROJECT_NAME=fabriclab
 
 # 打印帮助
 function printHelp () {
