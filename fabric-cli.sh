@@ -113,7 +113,7 @@ function replacePrivateKey () {
     OPTS="-i"
   fi
 
-  cp template.yaml $COMPOSE_FILE
+  cp docker-compose-tpl.yaml $COMPOSE_FILE
 
   CURRENT_DIR=$PWD
 
