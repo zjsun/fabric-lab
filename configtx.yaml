@@ -3,83 +3,75 @@ Profiles:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
-                - *Orderer1
+                - *Orderer
         Consortiums:
             SampleConsortium:
                 Organizations:
-                    - *Bank1
-                    - *Owner1
-                    - *Storage1
-                    - *Supervisor1
+                    - *Bank
+                    - *Owner
+                    - *Storage
+                    - *Supervisor
     OrgsChannel:
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *Bank1
-                - *Owner1
-                - *Storage1
-                - *Supervisor1
+                - *Bank
+                - *Owner
+                - *Storage
+                - *Supervisor
 
 Organizations:
-    - &Orderer1
+    - &Orderer
         Name: OrdererMSP
         ID: OrdererMSP
         MSPDir: crypto-config/ordererOrganizations/samples.cn/msp
 
-    - &Bank1
-        Name: Bank1MSP
-        ID: Bank1MSP
-        MSPDir: crypto-config/peerOrganizations/bank1.samples.cn/msp
+    - &Bank
+        Name: BankMSP
+        ID: BankMSP
+        MSPDir: crypto-config/peerOrganizations/bank.samples.cn/msp
 
         AnchorPeers:
-          - Host: peer0.bank1.samples.cn
+          - Host: pa.bank.samples.cn
             Port: 7051
 
-    - &Owner1
-        Name: Owner1MSP
-        ID: Owner1MSP
-        MSPDir: crypto-config/peerOrganizations/owner1.samples.cn/msp
+    - &Owner
+        Name: OwnerMSP
+        ID: OwnerMSP
+        MSPDir: crypto-config/peerOrganizations/owner.samples.cn/msp
 
         AnchorPeers:
-          - Host: peer0.owner1.samples.cn
+          - Host: zc.owner.samples.cn
             Port: 7051
 
-    - &Storage1
-        Name: Storage1MSP
-        ID: Storage1MSP
-        MSPDir: crypto-config/peerOrganizations/storage1.samples.cn/msp
+    - &Storage
+        Name: StorageMSP
+        ID: StorageMSP
+        MSPDir: crypto-config/peerOrganizations/storage.samples.cn/msp
 
         AnchorPeers:
-          - Host: peer0.storage1.samples.cn
+          - Host: yh.storage.samples.cn
             Port: 7051
 
-    - &Supervisor1
-        Name: Supervisor1MSP
-        ID: Supervisor1MSP
-        MSPDir: crypto-config/peerOrganizations/supervisor1.samples.cn/msp
+    - &Supervisor
+        Name: SupervisorMSP
+        ID: SupervisorMSP
+        MSPDir: crypto-config/peerOrganizations/supervisor.samples.cn/msp
 
         AnchorPeers:
-          - Host: peer0.supervisor1.samples.cn
+          - Host: sp.supervisor.samples.cn
             Port: 7051
 
 Orderer: &OrdererDefaults
     OrdererType: solo
     Addresses:
-      - orderer1.samples.cn:7050
-
+      - orderer.samples.cn:7050
     BatchTimeout: 2s
-
     BatchSize:
       MaxMessageCount: 10
       AbsoluteMaxBytes: 99 MB
       PreferredMaxBytes: 512 KB
-
-    Kafka:
-      Brokers:
-        - 127.0.0.1:9092
-
-    Organizations:
 
 Application: &ApplicationDefaults
     Organizations:

@@ -4,161 +4,158 @@ networks:
   lab:
 
 services:
-  ca.bank1.samples.cn:
+  # Orderer
+  orderer.samples.cn:
     extends:
-      file: docker-compose-base.yaml
-      service: fabric_ca
-    container_name: ca.bank1.samples.cn
-    environment:
-      - FABRIC_CA_SERVER_CA_NAME=ca.bank1.samples.cn
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.bank1.samples.cn-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_BANK1_PRIVATE_KEY
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.bank1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_BANK1_PRIVATE_KEY -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/bank1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
-    ports:
-      - "7054:7054"
-    networks:
-      - lab
-
-#  ca.owner1.samples.cn:
-#    extends:
-#      file: docker-compose-base.yaml
-#      service: fabric_ca
-#    container_name: ca.owner1.samples.cn
-#    environment:
-#      - FABRIC_CA_SERVER_CA_NAME=ca.owner1.samples.cn
-#      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.owner1.samples.cn-cert.pem
-#      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_OWNER1_PRIVATE_KEY
-#    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.owner1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_OWNER1_PRIVATE_KEY -b admin:adminpw -d'
-#    volumes:
-#      - ./crypto-config/peerOrganizations/owner1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
-#    ports:
-#      - "8054:7054"
-#    networks:
-#      - lab
-#
-#  ca.storage1.samples.cn:
-#    extends:
-#      file: docker-compose-base.yaml
-#      service: fabric_ca
-#    container_name: ca.storage1.samples.cn
-#    environment:
-#      - FABRIC_CA_SERVER_CA_NAME=ca.storage1.samples.cn
-#      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.storage1.samples.cn-cert.pem
-#      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_STORAGE1_PRIVATE_KEY
-#    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.storage1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_STORAGE1_PRIVATE_KEY -b admin:adminpw -d'
-#    volumes:
-#      - ./crypto-config/peerOrganizations/storage1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
-#    ports:
-#      - "9054:7054"
-#    networks:
-#      - lab
-#
-#  ca.supervisor1.samples.cn:
-#    extends:
-#      file: docker-compose-base.yaml
-#      service: fabric_ca
-#    container_name: ca.supervisor1.samples.cn
-#    environment:
-#      - FABRIC_CA_SERVER_CA_NAME=ca.supervisor1.samples.cn
-#      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.supervisor1.samples.cn-cert.pem
-#      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR1_PRIVATE_KEY
-#    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.supervisor1.samples.cn-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR1_PRIVATE_KEY -b admin:adminpw -d'
-#    volumes:
-#      - ./crypto-config/peerOrganizations/supervisor1.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
-#    ports:
-#      - "10054:7054"
-#    networks:
-#      - lab
-
-  orderer1.samples.cn:
-    extends:
-      file:   docker-compose-base.yaml
+      file: base.yaml
       service: fabric_orderer
-    container_name: orderer1.samples.cn
+    container_name: orderer.samples.cn
+    environment:
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt, /etc/hyperledger/pa.bank/tls/ca.crt, /etc/hyperledger/zc.owner/tls/ca.crt, /etc/hyperledger/yh.storage/tls/ca.crt, /etc/hyperledger/sp.supervisor/tls/ca.crt]
     volumes:
-      - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/msp:/var/hyperledger/orderer/msp
-      - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer1.samples.cn/tls/:/var/hyperledger/orderer/tls
+      - ./channel-artifacts/genesis.block:/etc/hyperledger/orderer/genesis.block
+      - ./crypto-config/ordererOrganizations/samples.cn/orderers/orderer.samples.cn/:/etc/hyperledger/orderer/
+      - ./crypto-config/peerOrganizations/bank.samples.cn/peers/pa.bank.samples.cn/:/etc/hyperledger/pa.bank/
+      - ./crypto-config/peerOrganizations/owner.samples.cn/peers/zc.owner.samples.cn/:/etc/hyperledger/zc.owner/
+      - ./crypto-config/peerOrganizations/storage.samples.cn/peers/yh.storage.samples.cn/:/etc/hyperledger/yh.storage/
+      - ./crypto-config/peerOrganizations/supervisor.samples.cn/peers/sp.supervisor.samples.cn/:/etc/hyperledger/sp.supervisor/
     ports:
       - "7050:7050"
-    networks:
-      - lab
 
-  peer0.bank1.samples.cn:
-    container_name: peer0.bank1.samples.cn
+  # CAs
+  ca.bank.samples.cn:
     extends:
-      file:  docker-compose-base.yaml
-      service: fabric_peer
+      file: base.yaml
+      service: fabric_ca
+    container_name: ca.bank.samples.cn
     environment:
-      - CORE_PEER_ID=peer0.bank1.samples.cn
-      - CORE_PEER_ADDRESS=peer0.bank1.samples.cn:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.bank1.samples.cn:7051
-      - CORE_PEER_LOCALMSPID=Bank1MSP
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.bank.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_BANK_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.bank.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_BANK_PRIVATE_KEY
     volumes:
-      - ./crypto-config/peerOrganizations/bank1.samples.cn/peers/peer0.bank1.samples.cn/msp:/etc/hyperledger/fabric/msp
-      - ./crypto-config/peerOrganizations/bank1.samples.cn/peers/peer0.bank1.samples.cn/tls:/etc/hyperledger/fabric/tls
-      - ./crypto-config/:/etc/hyperledger/crypto-config/
-      - ./channel-artifacts/:/etc/hyperledger/channel-artifacts/
+      - ./crypto-config/peerOrganizations/bank.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - "7054:7054"
+
+  ca.owner.samples.cn:
+    extends:
+      file: base.yaml
+      service: fabric_ca
+    container_name: ca.owner.samples.cn
+    environment:
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.owner.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_OWNER_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.owner.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_OWNER_PRIVATE_KEY
+    volumes:
+      - ./crypto-config/peerOrganizations/owner.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - "8054:7054"
+
+  ca.storage.samples.cn:
+    extends:
+      file: base.yaml
+      service: fabric_ca
+    container_name: ca.storage.samples.cn
+    environment:
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.storage.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_STORAGE_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.storage.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_STORAGE_PRIVATE_KEY
+    volumes:
+      - ./crypto-config/peerOrganizations/storage.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - "9054:7054"
+
+  ca.supervisor.samples.cn:
+    extends:
+      file: base.yaml
+      service: fabric_ca
+    container_name: ca.supervisor.samples.cn
+    environment:
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.supervisor.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR_PRIVATE_KEY
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.supervisor.samples.cn-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA_SUPERVISOR_PRIVATE_KEY
+    volumes:
+      - ./crypto-config/peerOrganizations/supervisor.samples.cn/ca/:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - "10054:7054"
+
+  # Peers
+  pa.bank.samples.cn:
+    extends:
+      file:  base.yaml
+      service: fabric_peer
+    container_name: pa.bank.samples.cn
+    environment:
+      - CORE_PEER_ID=pa.bank.samples.cn
+      - CORE_PEER_ADDRESS=pa.bank.samples.cn:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=pa.bank.samples.cn:7051
+#      - CORE_PEER_CHAINCODELISTENADDRESS=pa.bank.samples.cn:7052
+      - CORE_PEER_LOCALMSPID=BankMSP
+    volumes:
+      - ./crypto-config/peerOrganizations/bank.samples.cn/peers/pa.bank.samples.cn/:/etc/hyperledger/peer/
     ports:
       - "7051:7051"
       - "7053:7053"
-    networks:
-      - lab
+    depends_on:
+      - orderer.samples.cn
 
-#  peer0.owner1.samples.cn:
-#    container_name: peer0.owner1.samples.cn
-#    extends:
-#      file:  docker-compose-base.yaml
-#      service: fabric_peer
-#    environment:
-#      - CORE_PEER_ID=peer0.owner1.samples.cn
-#      - CORE_PEER_ADDRESS=peer0.owner1.samples.cn:7051
-#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.owner1.samples.cn:7051
-#      - CORE_PEER_LOCALMSPID=Owner1MSP
-#    volumes:
-#      - ./crypto-config/peerOrganizations/owner1.samples.cn/peers/peer0.owner1.samples.cn/msp:/etc/hyperledger/fabric/msp
-#      - ./crypto-config/peerOrganizations/owner1.samples.cn/peers/peer0.owner1.samples.cn/tls:/etc/hyperledger/fabric/tls
-#    ports:
-#      - "8051:7051"
-#      - "8053:7053"
-#    networks:
-#      - lab
-#
-#  peer0.storage1.samples.cn:
-#    container_name: peer0.storage1.samples.cn
-#    extends:
-#      file:  docker-compose-base.yaml
-#      service: fabric_peer
-#    environment:
-#      - CORE_PEER_ID=peer0.storage1.samples.cn
-#      - CORE_PEER_ADDRESS=peer0.storage1.samples.cn:7051
-#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.storage1.samples.cn:7051
-#      - CORE_PEER_LOCALMSPID=Storage1MSP
-#    volumes:
-#      - ./crypto-config/peerOrganizations/storage1.samples.cn/peers/peer0.storage1.samples.cn/msp:/etc/hyperledger/fabric/msp
-#      - ./crypto-config/peerOrganizations/storage1.samples.cn/peers/peer0.storage1.samples.cn/tls:/etc/hyperledger/fabric/tls
-#    ports:
-#      - "9051:7051"
-#      - "9053:7053"
-#    networks:
-#      - lab
-#
-#  peer0.supervisor1.samples.cn:
-#    container_name: peer0.supervisor1.samples.cn
-#    extends:
-#      file:  docker-compose-base.yaml
-#      service: fabric_peer
-#    environment:
-#      - CORE_PEER_ID=peer0.supervisor1.samples.cn
-#      - CORE_PEER_ADDRESS=peer0.supervisor1.samples.cn:7051
-#      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.supervisor1.samples.cn:7051
-#      - CORE_PEER_LOCALMSPID=Supervisor1MSP
-#    volumes:
-#      - ./crypto-config/peerOrganizations/supervisor1.samples.cn/peers/peer0.supervisor1.samples.cn/msp:/etc/hyperledger/fabric/msp
-#      - ./crypto-config/peerOrganizations/supervisor1.samples.cn/peers/peer0.supervisor1.samples.cn/tls:/etc/hyperledger/fabric/tls
-#    ports:
-#      - "10051:7051"
-#      - "10053:7053"
-#    networks:
-#      - lab
+  zc.owner.samples.cn:
+    extends:
+      file:  base.yaml
+      service: fabric_peer
+    container_name: zc.owner.samples.cn
+    environment:
+      - CORE_PEER_ID=zc.owner.samples.cn
+      - CORE_PEER_ADDRESS=zc.owner.samples.cn:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=zc.owner.samples.cn:7051
+#      - CORE_PEER_CHAINCODELISTENADDRESS=zc.owner.samples.cn:7052
+      - CORE_PEER_LOCALMSPID=OwnerMSP
+    volumes:
+      - ./crypto-config/peerOrganizations/owner.samples.cn/peers/zc.owner.samples.cn/:/etc/hyperledger/peer/
+    ports:
+      - "8051:7051"
+      - "8053:7053"
+    depends_on:
+      - orderer.samples.cn
+
+  yh.storage.samples.cn:
+    extends:
+      file:  base.yaml
+      service: fabric_peer
+    container_name: yh.storage.samples.cn
+    environment:
+      - CORE_PEER_ID=yh.storage.samples.cn
+      - CORE_PEER_ADDRESS=yh.storage.samples.cn:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=yh.storage.samples.cn:7051
+#      - CORE_PEER_CHAINCODELISTENADDRESS=yh.storage.samples.cn:7052
+      - CORE_PEER_LOCALMSPID=StorageMSP
+    volumes:
+      - ./crypto-config/peerOrganizations/storage.samples.cn/peers/yh.storage.samples.cn/:/etc/hyperledger/peer/
+    ports:
+      - "9051:7051"
+      - "9053:7053"
+    depends_on:
+      - orderer.samples.cn
+
+  sp.supervisor.samples.cn:
+    extends:
+      file:  base.yaml
+      service: fabric_peer
+    container_name: sp.supervisor.samples.cn
+    environment:
+      - CORE_PEER_ID=sp.supervisor.samples.cn
+      - CORE_PEER_ADDRESS=sp.supervisor.samples.cn:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=sp.supervisor.samples.cn:7051
+#      - CORE_PEER_CHAINCODELISTENADDRESS=sp.supervisor.samples.cn:7052
+      - CORE_PEER_LOCALMSPID=SupervisorMSP
+    volumes:
+      - ./crypto-config/peerOrganizations/supervisor.samples.cn/peers/sp.supervisor.samples.cn/:/etc/hyperledger/peer/
+    ports:
+      - "10051:7051"
+      - "10053:7053"
+    depends_on:
+      - orderer.samples.cn

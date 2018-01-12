@@ -6,14 +6,14 @@ export FABRIC_CFG_PATH=${PWD}
 # 打印帮助
 function printHelp () {
   echo "使用说明："
-  echo "  fabric-cli.sh -m start|stop|restart|clean|generate [-c <channel>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>]"
-  echo "  fabric-cli.sh -h|--help (print this message)"
-  echo "    -m <mode> - 子命令有 'start', 'stop', 'restart', 'clean' 或 'create'"
+  echo "  cli.sh -m start|stop|restart|clean|generate [-c <channel>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>]"
+  echo "  cli.sh -h|--help (print this message)"
+  echo "    -m <mode> - 子命令有 'start', 'stop', 'restart', 'clean' 或 'generate'"
   echo "      - 'start' - 启动网络服务"
   echo "      - 'stop' - 停止网络服务"
   echo "      - 'restart' - 重启网络服务"
   echo "      - 'clean' - 清理/删除网络服务"
-  echo "      - 'create' - 生成所需的网络服务、证书以及创世块"
+  echo "      - 'generate' - 生成所需的网络服务、证书以及创世块"
   echo "    -c <channel> - 要使用的通道名 (默认为 \"channel_lab\")"
   echo "    -t <timeout> - 命令超时时间，单位：秒 (默认为 10)"
   echo "    -d <delay> - 命令延时等待时间，单位：秒 (默认为 3)"
@@ -89,7 +89,7 @@ function generateChannelArtifacts() {
     exit 1
   fi
 
-  for OrgMSP in Bank1MSP Owner1MSP Storage1MSP Supervisor1MSP; do
+  for OrgMSP in BankMSP OwnerMSP StorageMSP SupervisorMSP; do
     echo
     echo "#################################################################"
     echo "#######    Generating anchor peer update for ${OrgMSP}   ##########"
@@ -117,25 +117,25 @@ function replacePrivateKey () {
 
   CURRENT_DIR=$PWD
 
-  cd crypto-config/peerOrganizations/bank1.samples.cn/ca/
+  cd crypto-config/peerOrganizations/bank.samples.cn/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
-  sed $OPTS "s/CA_BANK1_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
+  sed $OPTS "s/CA_BANK_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
 
-  cd crypto-config/peerOrganizations/owner1.samples.cn/ca/
+  cd crypto-config/peerOrganizations/owner.samples.cn/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
-  sed $OPTS "s/CA_OWNER1_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
+  sed $OPTS "s/CA_OWNER_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
 
-  cd crypto-config/peerOrganizations/storage1.samples.cn/ca/
+  cd crypto-config/peerOrganizations/storage.samples.cn/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
-  sed $OPTS "s/CA_STORAGE1_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
+  sed $OPTS "s/CA_STORAGE_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
 
-  cd crypto-config/peerOrganizations/supervisor1.samples.cn/ca/
+  cd crypto-config/peerOrganizations/supervisor.samples.cn/ca/
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
-  sed $OPTS "s/CA_SUPERVISOR1_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
+  sed $OPTS "s/CA_SUPERVISOR_PRIVATE_KEY/${PRIV_KEY}/g" $COMPOSE_FILE
 
   # MaxOSX 特殊
   if [ "$ARCH" == "Darwin" ]; then
@@ -143,24 +143,22 @@ function replacePrivateKey () {
   fi
 }
 
-# 创建docker容器
-function networkCreate () {
-  CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=$CLI_TIMEOUT DELAY=$CLI_DELAY docker-compose -f $COMPOSE_FILE up --no-start
-  if [ $? -ne 0 ]; then
-    echo "ERROR !!!! Unable to create network"
+# 启动网络
+function networkStart () {
+    CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=$CLI_TIMEOUT DELAY=$CLI_DELAY docker-compose -f $COMPOSE_FILE up -d
+    if [ $? -ne 0 ]; then
+    echo "ERROR !!!! Unable to start network"
     exit 1
   fi
 }
 
-function networkStart () {
-    CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=$CLI_TIMEOUT DELAY=$CLI_DELAY docker-compose -f $COMPOSE_FILE start
-}
-
+# 停止网络
 function networkStop () {
     docker-compose -f $COMPOSE_FILE stop
 }
 
-function networkClean () {
+# 清理网络和相关资源
+function cleanAll () {
     if [ -a "$COMPOSE_FILE" ]; then
         docker-compose -f $COMPOSE_FILE down
         rm -f $COMPOSE_FILE
@@ -213,8 +211,8 @@ elif [ "$MODE" == "restart" ]; then
   EXPMODE="Restarting"
 elif [ "$MODE" == "clean" ]; then
   EXPMODE="Cleaning"
-elif [ "$MODE" == "create" ]; then
-  EXPMODE="Creating network, certs and genesis block"
+elif [ "$MODE" == "generate" ]; then
+  EXPMODE="Generating network, certs and genesis block"
 else
   printHelp
   exit 1
@@ -225,18 +223,17 @@ echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOU
 # confirm
 
 # 执行子命令
-if [ "${MODE}" == "create" ]; then
-  networkClean
+if [ "${MODE}" == "generate" ]; then
+  cleanAll
   generateCerts
   generateChannelArtifacts
   replacePrivateKey
-  networkCreate
 elif [ "${MODE}" == "start" ]; then
   networkStart
 elif [ "${MODE}" == "stop" ]; then
   networkStop
 elif [ "${MODE}" == "clean" ]; then
-  networkClean
+  cleanAll
 elif [ "${MODE}" == "restart" ]; then
   networkStop
   networkStart

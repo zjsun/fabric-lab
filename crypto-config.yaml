@@ -2,33 +2,29 @@ OrdererOrgs:
   - Name: Orderer
     Domain: samples.cn
     Specs:
-      - Hostname: orderer1
+      - Hostname: orderer
 
 PeerOrgs:
-  - Name: Bank1
-    Domain: bank1.samples.cn
-    Template:
-      Count: 2
-    Users:
-      Count: 2
+  - Name: Bank
+    Domain: bank.samples.cn
+    Specs:
+      # 平安银行
+      - Hostname: pa
 
-  - Name: Owner1
-    Domain: owner1.samples.cn
-    Template:
-      Count: 2
-    Users:
-      Count: 2
+  - Name: Owner
+    Domain: owner.samples.cn
+    Specs:
+      # 江苏众诚
+      - Hostname: zc
 
-  - Name: Storage1
-    Domain: storage1.samples.cn
-    Template:
-      Count: 2
-    Users:
-      Count: 2
+  - Name: Storage
+    Domain: storage.samples.cn
+    Specs:
+      # 阳宏石化
+      - Hostname: yh
 
-  - Name: Supervisor1
-    Domain: supervisor1.samples.cn
-    Template:
-      Count: 2
-    Users:
-      Count: 2
+  - Name: Supervisor
+    Domain: supervisor.samples.cn
+    Specs:
+      # 三宝科技
+      - Hostname: sp
