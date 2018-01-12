@@ -8,23 +8,19 @@ PeerOrgs:
   - Name: Bank
     Domain: bank.samples.cn
     Specs:
-      # 平安银行
       - Hostname: pa
 
   - Name: Owner
     Domain: owner.samples.cn
     Specs:
-      # 江苏众诚
       - Hostname: zc
 
   - Name: Storage
     Domain: storage.samples.cn
     Specs:
-      # 阳宏石化
       - Hostname: yh
 
   - Name: Supervisor
     Domain: supervisor.samples.cn
     Specs:
-      # 三宝科技
       - Hostname: sp
