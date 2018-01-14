@@ -159,3 +159,25 @@ services:
       - "10053:7053"
     depends_on:
       - orderer.samples.cn
+
+  cli.samples.cn:
+    container_name: cli.samples.cn
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/cli
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./chaincode/:/etc/hyperledger/cli/chaincode/
+        - ./crypto-config:/etc/hyperledger/cli/crypto-config/
+        - ./channel-artifacts/:/etc/hyperledger/cli/channel-artifacts/
+    depends_on:
+      - pa.bank.samples.cn
+      - zc.owner.samples.cn
+      - yh.storage.samples.cn
+      - sp.supervisor.samples.cn
+    networks:
+      - lab

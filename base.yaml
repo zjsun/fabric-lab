@@ -10,6 +10,7 @@ services:
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_TLS_ENABLED=true
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/ca
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     networks:
       - lab
